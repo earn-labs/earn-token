@@ -38,15 +38,13 @@ contract AutoRevToken is ERC20, Ownable {
                                  EVENTS
     //////////////////////////////////////////////////////////////*/
     event SetFee(uint256 indexed fee);
-    event ExcludeFromReward(address indexed account);
-    event IncludeInReward(address indexed account);
-    event ExcludeFromFee(address indexed account);
-    event IncludeInFee(address indexed account);
+    event ExcludeFromReward(address indexed account, bool indexed isExcluded);
+    event ExcludeFromFee(address indexed account, bool indexed isExcluded);
 
     /*//////////////////////////////////////////////////////////////
                                  ERRORS
     //////////////////////////////////////////////////////////////*/
-    error ExcludedListTooLong();
+    error ExcludedFromRewardListTooLong();
     error ValueAlreadySet();
 
     /*//////////////////////////////////////////////////////////////
@@ -180,6 +178,7 @@ contract AutoRevToken is ERC20, Ownable {
 
     function _excludeFromFee(address account, bool isExcluded) private {
         isExcludedFromFee[account] = isExcluded;
+        emit ExcludeFromFee(account, isExcluded);
     }
 
     function _excludeFromReward(address account, bool isExcluded) private {
@@ -188,7 +187,7 @@ contract AutoRevToken is ERC20, Ownable {
         }
 
         if (_excludedFromReward.length > 100) {
-            revert ExcludedListTooLong();
+            revert ExcludedFromRewardListTooLong();
         }
 
         if (isExcluded) {
@@ -210,6 +209,7 @@ contract AutoRevToken is ERC20, Ownable {
                 }
             }
         }
+        emit ExcludeFromReward(account, isExcluded);
     }
 
     function _getRate() private view returns (uint256) {
