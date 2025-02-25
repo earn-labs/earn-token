@@ -5,6 +5,9 @@ import {Script, console} from "forge-std/Script.sol";
 
 contract HelperConfig is Script {
     struct NetworkConfig {
+        string name;
+        string symbol;
+        uint256 totalSupply;
         address initialOwner;
     }
 
@@ -13,7 +16,10 @@ contract HelperConfig is Script {
     /*//////////////////////////////////////////////////////////////
                                 HELPERS
     //////////////////////////////////////////////////////////////*/
-    uint256 constant CONSTANT = 0;
+
+    string constant NAME = "AutoRevToken";
+    string constant SYMBOL = "ART";
+    uint256 constant TOTAL_SUPPLY = 1_000_000_000;
 
     constructor() {
         if (block.chainid == 8453 || block.chainid == 123) {
@@ -29,18 +35,33 @@ contract HelperConfig is Script {
                           CHAIN CONFIGURATIONS
     //////////////////////////////////////////////////////////////*/
     function getTestnetConfig() public pure returns (NetworkConfig memory) {
-        return NetworkConfig({initialOwner: 0x7Bb8be3D9015682d7AC0Ea377dC0c92B0ba152eF});
+        return NetworkConfig({
+            name: NAME,
+            symbol: SYMBOL,
+            totalSupply: TOTAL_SUPPLY,
+            initialOwner: 0x7Bb8be3D9015682d7AC0Ea377dC0c92B0ba152eF
+        });
     }
 
     function getMainnetConfig() public pure returns (NetworkConfig memory) {
-        return NetworkConfig({initialOwner: 0x7Bb8be3D9015682d7AC0Ea377dC0c92B0ba152eF});
+        return NetworkConfig({
+            name: NAME,
+            symbol: SYMBOL,
+            totalSupply: TOTAL_SUPPLY,
+            initialOwner: 0x7Bb8be3D9015682d7AC0Ea377dC0c92B0ba152eF
+        });
     }
 
     function getAnvilConfig() public pure returns (NetworkConfig memory) {
         // vm.startBroadcast();
         // vm.stopBroadcast();
 
-        return NetworkConfig({initialOwner: 0x7Bb8be3D9015682d7AC0Ea377dC0c92B0ba152eF});
+        return NetworkConfig({
+            name: NAME,
+            symbol: SYMBOL,
+            totalSupply: TOTAL_SUPPLY,
+            initialOwner: 0x7Bb8be3D9015682d7AC0Ea377dC0c92B0ba152eF
+        });
     }
 
     /*//////////////////////////////////////////////////////////////
