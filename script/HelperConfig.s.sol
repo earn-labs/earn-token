@@ -70,4 +70,8 @@ contract HelperConfig is Script {
     function getActiveNetworkConfig() public view returns (NetworkConfig memory) {
         return activeNetworkConfig;
     }
+
+    function getActiveNetworkConfigStruct() public view returns (NetworkConfig memory) {
+        return activeNetworkConfig;
+    }
 }

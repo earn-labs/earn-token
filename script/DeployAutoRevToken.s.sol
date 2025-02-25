@@ -5,7 +5,7 @@ import {Script} from "forge-std/Script.sol";
 import {AutoRevToken} from "src/AutoRevToken.sol";
 import {HelperConfig} from "./HelperConfig.s.sol";
 
-contract Deploy is Script {
+contract DeployAutoRevToken is Script {
     function run() external returns (AutoRevToken, HelperConfig) {
         HelperConfig config = new HelperConfig();
 
@@ -13,8 +13,8 @@ contract Deploy is Script {
             config.activeNetworkConfig();
 
         vm.startBroadcast();
-        AutoRevToken myContract = new AutoRevToken(name, symbol, totalSupply, initialOwner);
+        AutoRevToken tokenContract = new AutoRevToken(name, symbol, totalSupply, initialOwner);
         vm.stopBroadcast();
-        return (myContract, config);
+        return (tokenContract, config);
     }
 }
