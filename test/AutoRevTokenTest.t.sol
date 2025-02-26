@@ -124,7 +124,7 @@ contract AutoRevTokenTest is Test {
         assertEq(token.balanceOf(USER2), expectedBalanceUser2);
     }
 
-    function test__TransferWithExcludedFromReward() public funded(USER1) {
+    function test__TransferWithExcludedFromRewardTo() public funded(USER1) {
         address owner = token.owner();
         uint256 amount = 10_000 ether;
 
@@ -141,6 +141,56 @@ contract AutoRevTokenTest is Test {
         assertEq(token.balanceOf(USER2), expectedBalanceUser2 + reflectionsUser2);
     }
 
+    function test__TransferWithExcludedFromRewardFrom() public funded(USER1) {
+        address owner = token.owner();
+        uint256 amount = 10_000 ether;
+
+        vm.prank(owner);
+        token.excludeFromReward(USER1, true);
+
+        (uint256 expectedBalanceUser1, uint256 expectedBalanceUser2, uint256 reflectionsUser1, uint256 reflectionsUser2)
+        = calcReflections(USER1, USER2, amount);
+
+        vm.prank(USER1);
+        token.transfer(USER2, amount);
+
+        assertEq(token.balanceOf(USER1), expectedBalanceUser1 + reflectionsUser1);
+        assertEq(token.balanceOf(USER2), expectedBalanceUser2 + reflectionsUser2);
+    }
+
+    function test__TransferWithExcludedFromRewardFromAndTo() public funded(USER1) {
+        address owner = token.owner();
+        uint256 amount = 10_000 ether;
+
+        vm.startPrank(owner);
+        token.excludeFromReward(USER1, true);
+        token.excludeFromReward(USER2, true);
+        vm.stopPrank();
+
+        (uint256 expectedBalanceUser1, uint256 expectedBalanceUser2, uint256 reflectionsUser1, uint256 reflectionsUser2)
+        = calcReflections(USER1, USER2, amount);
+
+        vm.prank(USER1);
+        token.transfer(USER2, amount);
+
+        assertEq(token.balanceOf(USER1), expectedBalanceUser1 + reflectionsUser1);
+        assertEq(token.balanceOf(USER2), expectedBalanceUser2 + reflectionsUser2);
+    }
+
+    function test__TransferByOnwerWhenTransfersDisabled() public funded(USER1) {
+        address owner = token.owner();
+        uint256 amount = 10_000 ether;
+
+        uint256 expectedBalanceOwner = token.balanceOf(owner) - amount;
+        uint256 expectedBalanceUser1 = token.balanceOf(USER1) + amount;
+
+        vm.prank(owner);
+        token.transfer(USER1, amount);
+
+        assertEq(token.balanceOf(owner), expectedBalanceOwner);
+        assertEq(token.balanceOf(USER1), expectedBalanceUser1);
+    }
+
     function test__EmitEvent__Transfer() public funded(USER1) {
         uint256 amount = 10_000 ether;
 
@@ -151,8 +201,37 @@ contract AutoRevTokenTest is Test {
         token.transfer(USER2, amount);
     }
 
+    function test__RevertWhen__TransfersDisabled() public funded(USER1) {
+        address owner = token.owner();
+        uint256 amount = 10000 ether;
+
+        vm.prank(owner);
+        token.setFee(10000);
+
+        vm.expectRevert(AutoRevToken.AutoRevToken__TransfersDisabled.selector);
+
+        vm.prank(USER1);
+        token.transfer(USER2, amount);
+    }
+
     function test__RevertWhen__TransferWithInsufficientBalance() public funded(USER1) {
         uint256 amount = 2_000_000 ether;
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                IERC20Errors.ERC20InsufficientBalance.selector, USER1, token.balanceOf(USER1), amount
+            )
+        );
+        vm.prank(USER1);
+        token.transfer(USER2, amount);
+    }
+
+    function test__RevertWhen__TransferExcludedFromRewardWithInsufficientBalance() public funded(USER1) {
+        address owner = token.owner();
+        uint256 amount = 2_000_000 ether;
+
+        vm.prank(owner);
+        token.excludeFromReward(USER1, true);
+
         vm.expectRevert(
             abi.encodeWithSelector(
                 IERC20Errors.ERC20InsufficientBalance.selector, USER1, token.balanceOf(USER1), amount
@@ -324,6 +403,16 @@ contract AutoRevTokenTest is Test {
         token.setFee(newFee);
     }
 
+    function test__RevertWhen__SetFeeInvalid() public {
+        address owner = token.owner();
+        uint256 newFee = 10010;
+
+        vm.expectRevert(AutoRevToken.AutoRevToken__InvalidFee.selector);
+
+        vm.prank(owner);
+        token.setFee(newFee);
+    }
+
     /*//////////////////////////////////////////////////////////////
                           EXCLUDE FROM FEE
     //////////////////////////////////////////////////////////////*/
@@ -367,6 +456,32 @@ contract AutoRevTokenTest is Test {
         assertEq(token.isExcludedFromReward(USER1), true);
     }
 
+    function test__GetExcludeFromRewardLength() public {
+        address owner = token.owner();
+
+        for (uint256 i = 0; i < 50; i++) {
+            vm.prank(owner);
+            token.excludeFromReward(address(uint160(i)), true);
+        }
+
+        assertEq(token.getNumberOfAccountsExcludedFromRewards(), 50);
+    }
+
+    function test__IncludeFromReward() public {
+        address owner = token.owner();
+
+        vm.prank(owner);
+        token.excludeFromReward(USER1, true);
+
+        assertEq(token.getNumberOfAccountsExcludedFromRewards(), 1);
+
+        vm.prank(owner);
+        token.excludeFromReward(USER1, false);
+
+        assertEq(token.isExcludedFromReward(USER1), false);
+        assertEq(token.getNumberOfAccountsExcludedFromRewards(), 0);
+    }
+
     function test__EmitEvent__ExcludeFromReward() public {
         address owner = token.owner();
 
@@ -381,6 +496,31 @@ contract AutoRevTokenTest is Test {
         vm.expectRevert(abi.encodeWithSelector(Ownable.OwnableUnauthorizedAccount.selector, USER1));
 
         vm.prank(USER1);
+        token.excludeFromReward(USER1, true);
+    }
+
+    function test__RevertWhen__ExcludeFromRewardAlreadySet() public {
+        address owner = token.owner();
+
+        vm.expectRevert(AutoRevToken.AutoRevToken__ValueAlreadySet.selector);
+
+        vm.prank(owner);
+        token.excludeFromReward(USER1, false);
+    }
+
+    function test__RevertWhen__ExcludeFromRewardListTooLong() public {
+        address owner = token.owner();
+
+        for (uint256 i = 0; i < 100; i++) {
+            vm.prank(owner);
+            token.excludeFromReward(address(uint160(i)), true);
+        }
+
+        assertEq(token.getNumberOfAccountsExcludedFromRewards(), 100);
+
+        vm.expectRevert(AutoRevToken.AutoRevToken__ExcludedFromRewardListTooLong.selector);
+
+        vm.prank(owner);
         token.excludeFromReward(USER1, true);
     }
 
@@ -430,5 +570,18 @@ contract AutoRevTokenTest is Test {
 
         vm.prank(owner);
         token.withdrawTokens(address(token), USER2);
+    }
+
+    /*//////////////////////////////////////////////////////////////
+                                GETTERS
+    //////////////////////////////////////////////////////////////*/
+    function test__GetTotalFees(uint256 amount) public funded(USER1) {
+        amount = bound(amount, 1, STARTING_BALANCE);
+        uint256 fee = token.getFee() * amount / 10000;
+
+        vm.prank(USER1);
+        token.transfer(USER2, amount);
+
+        assertEq(token.getTotalFees(), fee);
     }
 }

@@ -24,9 +24,9 @@ contract AutoRevToken is ERC20, Ownable {
 
     uint256 private s_rTotalSupply;
 
-    address[] private _excludedFromReward;
+    address[] private s_excludedFromReward;
 
-    uint256 private s_taxFee = 200; // 200 => 2%
+    uint256 private s_txFee = 200; // 200 => 2%
     uint256 private s_totalFees;
 
     mapping(address => uint256) private s_rBalances; // balances in r-space
@@ -48,6 +48,8 @@ contract AutoRevToken is ERC20, Ownable {
     error AutoRevToken__ExcludedFromRewardListTooLong();
     error AutoRevToken__ValueAlreadySet();
     error AutoRevToken__TokenTransferFailed();
+    error AutoRevToken__InvalidFee();
+    error AutoRevToken__TransfersDisabled();
 
     /*//////////////////////////////////////////////////////////////
                                FUNCTIONS
@@ -68,8 +70,11 @@ contract AutoRevToken is ERC20, Ownable {
                            EXTERNAL FUNCTIONS
     //////////////////////////////////////////////////////////////*/
     function setFee(uint256 newTxFee) external onlyOwner {
-        s_taxFee = newTxFee;
-        emit SetFee(s_taxFee);
+        if (newTxFee > PRECISION) {
+            revert AutoRevToken__InvalidFee();
+        }
+        s_txFee = newTxFee;
+        emit SetFee(s_txFee);
     }
 
     function excludeFromFee(address account, bool isExcluded) external onlyOwner {
@@ -88,7 +93,7 @@ contract AutoRevToken is ERC20, Ownable {
     }
 
     function getFee() external view returns (uint256) {
-        return s_taxFee;
+        return s_txFee;
     }
 
     function getTotalFees() external view returns (uint256) {
@@ -101,6 +106,10 @@ contract AutoRevToken is ERC20, Ownable {
 
     function isExcludedFromReward(address account) external view returns (bool) {
         return s_isExcludedFromReward[account];
+    }
+
+    function getNumberOfAccountsExcludedFromRewards() external view returns (uint256) {
+        return s_excludedFromReward.length;
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -129,16 +138,19 @@ contract AutoRevToken is ERC20, Ownable {
             }
         } else {
             // regular transfer
-            uint256 _taxFee;
+            uint256 txFee;
             if (s_isExcludedFromFee[from] || s_isExcludedFromFee[to]) {
-                _taxFee = 0;
+                txFee = 0;
             } else {
-                _taxFee = s_taxFee;
+                txFee = s_txFee;
+                if (txFee == PRECISION) {
+                    revert AutoRevToken__TransfersDisabled();
+                }
             }
 
             // calc t-values
             uint256 tAmount = value;
-            uint256 tTxFee = (tAmount * _taxFee) / PRECISION;
+            uint256 tTxFee = (tAmount * txFee) / PRECISION;
             uint256 tTransferAmount = tAmount - tTxFee;
 
             // calc r-values
@@ -206,7 +218,7 @@ contract AutoRevToken is ERC20, Ownable {
             revert AutoRevToken__ValueAlreadySet();
         }
 
-        if (_excludedFromReward.length > 100) {
+        if (s_excludedFromReward.length + 1 > 100) {
             revert AutoRevToken__ExcludedFromRewardListTooLong();
         }
 
@@ -216,15 +228,15 @@ contract AutoRevToken is ERC20, Ownable {
                 s_tBalances[account] = s_rBalances[account] / rate;
             }
             s_isExcludedFromReward[account] = true;
-            _excludedFromReward.push(account);
+            s_excludedFromReward.push(account);
         } else {
-            uint256 nExcluded = _excludedFromReward.length;
+            uint256 nExcluded = s_excludedFromReward.length;
             for (uint256 i = 0; i < nExcluded; i++) {
-                if (_excludedFromReward[i] == account) {
-                    _excludedFromReward[i] = _excludedFromReward[_excludedFromReward.length - 1];
+                if (s_excludedFromReward[i] == account) {
+                    s_excludedFromReward[i] = s_excludedFromReward[s_excludedFromReward.length - 1];
                     s_tBalances[account] = 0;
                     s_isExcludedFromReward[account] = false;
-                    _excludedFromReward.pop();
+                    s_excludedFromReward.pop();
                     break;
                 }
             }
@@ -236,19 +248,21 @@ contract AutoRevToken is ERC20, Ownable {
         uint256 rSupply = s_rTotalSupply;
         uint256 tSupply = i_tTotalSupply;
 
-        uint256 nExcluded = _excludedFromReward.length;
+        uint256 nExcluded = s_excludedFromReward.length;
         for (uint256 i = 0; i < nExcluded;) {
             unchecked {
-                rSupply = rSupply - s_rBalances[_excludedFromReward[i]];
-                tSupply = tSupply - s_tBalances[_excludedFromReward[i]];
+                rSupply = rSupply - s_rBalances[s_excludedFromReward[i]];
+                tSupply = tSupply - s_tBalances[s_excludedFromReward[i]];
                 i++;
             }
         }
+
+        // set lower bound of rSupply to avoid numerical issues (e.g. division by small values near zero)
         if (rSupply < s_rTotalSupply / i_tTotalSupply) {
             rSupply = s_rTotalSupply;
             tSupply = i_tTotalSupply;
         }
-        // rSupply always > tSupply (no precision loss)
+        // rSupply always >= tSupply (no precision loss)
         uint256 rate = rSupply / tSupply;
         return rate;
     }
