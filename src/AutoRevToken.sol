@@ -141,6 +141,8 @@ contract AutoRevToken is ERC20, Ownable {
             unchecked {
                 s_rBalances[to] += s_rTotalSupply;
             }
+
+            emit Transfer(from, to, value);
         } else {
             // regular transfer
             uint256 txFee;
@@ -203,10 +205,10 @@ contract AutoRevToken is ERC20, Ownable {
                 // current s_rTotalSupply
                 s_rTotalSupply = s_rTotalSupply - rTxFee;
                 s_totalFees += tTxFee;
+
+                emit Transfer(from, to, tTransferAmount);
             }
         }
-
-        emit Transfer(from, to, value);
     }
 
     /*//////////////////////////////////////////////////////////////
