@@ -119,6 +119,7 @@ contract AutoRevToken is ERC20, Ownable {
     /*//////////////////////////////////////////////////////////////
                             PUBLIC FUNCTIONS
     //////////////////////////////////////////////////////////////*/
+
     function totalSupply() public view override returns (uint256) {
         return i_tTotalSupply;
     }

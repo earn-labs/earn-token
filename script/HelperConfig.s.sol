@@ -18,8 +18,8 @@ contract HelperConfig is Script {
                                 HELPERS
     //////////////////////////////////////////////////////////////*/
 
-    string constant NAME = "Test 1";
-    string constant SYMBOL = "TEST1";
+    string constant NAME = "Test 2";
+    string constant SYMBOL = "TEST2";
     uint256 constant TOTAL_SUPPLY = 1_000_000_000;
 
     constructor() {
