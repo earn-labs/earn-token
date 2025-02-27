@@ -1,4 +1,4 @@
 ds-test/=lib/forge-std/lib/ds-test/src/
 forge-std/=lib/forge-std/src/
-foundry-devops/=lib/foundry-devops/
+foundry-devops/src/=lib/foundry-devops/src/
 @openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/

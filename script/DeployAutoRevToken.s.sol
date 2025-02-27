@@ -9,11 +9,11 @@ contract DeployAutoRevToken is Script {
     function run() external returns (AutoRevToken, HelperConfig) {
         HelperConfig config = new HelperConfig();
 
-        (string memory name, string memory symbol, uint256 totalSupply, address initialOwner) =
+        (string memory name, string memory symbol, uint256 totalSupply, uint256 initialFee, address initialOwner) =
             config.activeNetworkConfig();
 
         vm.startBroadcast();
-        AutoRevToken tokenContract = new AutoRevToken(name, symbol, totalSupply, initialOwner);
+        AutoRevToken tokenContract = new AutoRevToken(name, symbol, totalSupply, initialFee, initialOwner);
         vm.stopBroadcast();
         return (tokenContract, config);
     }

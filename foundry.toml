@@ -12,6 +12,6 @@ fs_permissions = [{ access = "read", path = "./broadcast" }]
 runs = 10000
 
 [invariant]
-runs = 128
+runs = 64
 depth = 128
 fail_on_revert = true

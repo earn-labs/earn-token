@@ -17,8 +17,8 @@ contract AutoRevToken is ERC20, Ownable {
     /*//////////////////////////////////////////////////////////////
                             STATE VARIABLES
     //////////////////////////////////////////////////////////////*/
-    uint256 private constant MAX = ~uint256(0);
     uint256 private constant PRECISION = 10000;
+    uint256 private constant MAX = type(uint256).max;
 
     uint256 private immutable i_tTotalSupply;
 
@@ -26,7 +26,7 @@ contract AutoRevToken is ERC20, Ownable {
 
     address[] private s_excludedFromReward;
 
-    uint256 private s_txFee = 200; // 200 => 2%
+    uint256 private s_txFee; // 200 => 2%
     uint256 private s_totalFees;
 
     mapping(address => uint256) private s_rBalances; // balances in r-space
@@ -54,11 +54,15 @@ contract AutoRevToken is ERC20, Ownable {
     /*//////////////////////////////////////////////////////////////
                                FUNCTIONS
     //////////////////////////////////////////////////////////////*/
-    constructor(string memory name_, string memory symbol_, uint256 totalSupply_, address initialOwner)
-        ERC20(name_, symbol_)
-        Ownable(msg.sender)
-    {
+    constructor(
+        string memory name_,
+        string memory symbol_,
+        uint256 totalSupply_,
+        uint256 initialTxFee,
+        address initialOwner
+    ) ERC20(name_, symbol_) Ownable(msg.sender) {
         i_tTotalSupply = totalSupply_ * 10 ** decimals();
+        s_txFee = initialTxFee;
 
         _excludeFromFee(initialOwner, true);
         _excludeFromFee(address(this), true);
