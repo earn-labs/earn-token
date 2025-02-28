@@ -3,7 +3,7 @@ pragma solidity 0.8.20;
 
 import {Script, console} from "forge-std/Script.sol";
 import {DevOpsTools} from "foundry-devops/src/DevOpsTools.sol";
-import {AutoRevToken} from "src/AutoRevToken.sol";
+import {ReflectionToken} from "src/ReflectionToken.sol";
 
 contract Transfer is Script {
     uint256 public transferAmount = 10_000 ether;
@@ -12,13 +12,13 @@ contract Transfer is Script {
     function transfer(address recentContractAddress) public {
         vm.startBroadcast();
         uint256 gasLeft = gasleft();
-        AutoRevToken(payable(recentContractAddress)).transfer(account, transferAmount);
+        ReflectionToken(payable(recentContractAddress)).transfer(account, transferAmount);
         console.log("Transfer gas: ", gasLeft - gasleft());
         vm.stopBroadcast();
     }
 
     function run() external {
-        address recentContractAddress = DevOpsTools.get_most_recent_deployment("AutoRevToken", block.chainid);
+        address recentContractAddress = DevOpsTools.get_most_recent_deployment("ReflectionToken", block.chainid);
         transfer(recentContractAddress);
     }
 }
@@ -31,13 +31,13 @@ contract TransferFrom is Script {
     function transferFrom(address recentContractAddress) public {
         vm.startBroadcast();
         uint256 gasLeft = gasleft();
-        AutoRevToken(payable(recentContractAddress)).transferFrom(sender, receiver, transferAmount);
+        ReflectionToken(payable(recentContractAddress)).transferFrom(sender, receiver, transferAmount);
         console.log("TransferFrom gas: ", gasLeft - gasleft());
         vm.stopBroadcast();
     }
 
     function run() external {
-        address recentContractAddress = DevOpsTools.get_most_recent_deployment("AutoRevToken", block.chainid);
+        address recentContractAddress = DevOpsTools.get_most_recent_deployment("ReflectionToken", block.chainid);
         transferFrom(recentContractAddress);
     }
 }
@@ -49,13 +49,13 @@ contract Approve is Script {
     function approve(address recentContractAddress) public {
         vm.startBroadcast();
         uint256 gasLeft = gasleft();
-        AutoRevToken(payable(recentContractAddress)).approve(account, transferAmount);
+        ReflectionToken(payable(recentContractAddress)).approve(account, transferAmount);
         console.log("Approval gas: ", gasLeft - gasleft());
         vm.stopBroadcast();
     }
 
     function run() external {
-        address recentContractAddress = DevOpsTools.get_most_recent_deployment("AutoRevToken", block.chainid);
+        address recentContractAddress = DevOpsTools.get_most_recent_deployment("ReflectionToken", block.chainid);
         approve(recentContractAddress);
     }
 }

@@ -4,24 +4,24 @@ pragma solidity 0.8.20;
 import {Test, console} from "forge-std/Test.sol";
 import {StdInvariant} from "forge-std/StdInvariant.sol";
 
-import {AutoRevToken} from "src/AutoRevToken.sol";
-import {DeployAutoRevToken} from "script/DeployAutoRevToken.s.sol";
+import {ReflectionToken} from "src/ReflectionToken.sol";
+import {DeployReflectionToken} from "script/DeployReflectionToken.s.sol";
 import {HelperConfig} from "script/HelperConfig.s.sol";
 import {Handler} from "test/invariant/Handler.t.sol";
 
-contract AutoRevTokenInvariantTest is StdInvariant, Test {
+contract ReflectionTokenInvariantTest is StdInvariant, Test {
     // configuration
-    DeployAutoRevToken deployment;
+    DeployReflectionToken deployment;
     HelperConfig helperConfig;
     HelperConfig.NetworkConfig networkConfig;
     Handler handler;
 
     // contract
-    AutoRevToken token;
+    ReflectionToken token;
 
     // setup
     function setUp() external {
-        deployment = new DeployAutoRevToken();
+        deployment = new DeployReflectionToken();
         (token, helperConfig) = deployment.run();
 
         handler = new Handler(token);

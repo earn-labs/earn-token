@@ -1,17 +1,17 @@
-# REFLECTION TOKEN (UPDATED)
+# REFLECTION TOKEN (UPDATED!)
 
 ![Version](https://img.shields.io/badge/version-1.0.0-blue.svg?style=for-the-badge)
 ![Forge](https://img.shields.io/badge/forge-v0.2.0-blue.svg?style=for-the-badge)
 ![Solc](https://img.shields.io/badge/solc-v0.8.20-blue.svg?style=for-the-badge)
 [![GitHub License](https://img.shields.io/github/license/trashpirate/foundry-starter?style=for-the-badge)](https://github.com/trashpirate/reflection-token/blob/master/LICENSE)
 
-[![Website: nadinaoates.com](https://img.shields.io/badge/Portfolio-00e0a7?style=for-the-badge&logo=Website)](https://nadinaoates.com)
+[![Website: trashpirate.io](https://img.shields.io/badge/Portfolio-00e0a7?style=for-the-badge&logo=Website)](https://trashpirate.io)
 [![LinkedIn: nadinaoates](https://img.shields.io/badge/LinkedIn-0a66c2?style=for-the-badge&logo=LinkedIn&logoColor=f5f5f5)](https://linkedin.com/in/nadinaoates)
-[![Twitter: N0_crypto](https://img.shields.io/badge/@N0_crypto-black?style=for-the-badge&logo=X)](https://twitter.com/N0_crypto)
+[![Twitter: N0_crypto](https://img.shields.io/badge/@0xTrashPirate-black?style=for-the-badge&logo=X)](https://twitter.com/0xTrashPirate)
 
 
 ## About
-This repo contains the smart contract code and a full test suite for a Reflection Token based on the ERC20 standard. The contract is designed to automatically distribute transaction fees to token holders, providing them with automatic revenue share from the transaction volume. The code is adapted from the [SAFEMOON]() contract, with modifications to remove liqudity and marketing fees and leveraging Openzepplin contracts for security and best practices. A detailed description of the reflection mechanism can be found [here](https://github.com/regohiro/reflect-contract-doc/blob/main/). The PdF version is available in the [docs](https://github.com/trashpirate/reflection-token/tree/master/docs). 
+This repo contains the smart contract code and a full test suite for a Reflection Token based on the ERC20 standard. The contract is designed to automatically distribute transaction fees to token holders, providing them with automatic revenue share from the transaction volume. The code is adapted from the [SAFEMOON]() contract, with modifications to remove liqudity and marketing fees and leveraging Openzepplin contracts and a newer Solidity version for security and best practices. A detailed description of the reflection mechanism can be found [here](https://github.com/regohiro/reflect-contract-doc/blob/main/). The PdF version is available in the [docs](https://github.com/trashpirate/reflection-token/tree/master/docs). 
 
 
 ## Installation
@@ -82,8 +82,9 @@ Don't forget to give the project a star! Thanks again!
 
 👤 **Nadina Oates**
 
-* Website: [nadinaoates.com](https://nadinaoates.com)
-* Twitter: [@N0\_crypto](https://twitter.com/N0\_crypto)
+* Website: [trashpirate.io](https://trashpirate.io)
+* Twitter: [@0xTrashPirate](https://twitter.com/0xTrashPirate)
+* Focus: [@trashpriate](https://focus.xyz/trashpirate)
 * Github: [@trashpirate](https://github.com/trashpirate)
 * LinkedIn: [@nadinaoates](https://linkedin.com/in/nadinaoates)
 

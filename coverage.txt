@@ -4,7 +4,7 @@ Compiler run successful!
 Analysing contracts...
 Running tests...
 
-Ran 40 tests for test/AutoRevTokenTest.t.sol:AutoRevTokenTest
+Ran 40 tests for test/ReflectionTokenTest.t.sol:ReflectionTokenTest
 [PASS] test__Approve() (gas: 95668)
 [PASS] test__EmitEvent__Approve() (gas: 95533)
 [PASS] test__EmitEvent__ExcludeFromFee() (gas: 41280)
@@ -48,7 +48,7 @@ Ran 40 tests for test/AutoRevTokenTest.t.sol:AutoRevTokenTest
 Suite result: ok. 40 passed; 0 failed; 0 skipped; finished in 7.29s (6.58s CPU time)
 
 Ran 1 test suite in 7.30s (7.29s CPU time): 40 tests passed, 0 failed, 0 skipped (40 total tests)
-Uncovered for script/DeployAutoRevToken.s.sol:
+Uncovered for script/DeployReflectionToken.s.sol:
 
 Uncovered for script/HelperConfig.s.sol:
 - Branch (branch: 0, path: 0) (location: source ID 31, line 25, chars 719-784, hits: 0)
@@ -67,7 +67,7 @@ Uncovered for script/HelperConfig.s.sol:
 - Line (location: source ID 31, line 71, chars 2363-2389, hits: 0)
 - Statement (location: source ID 31, line 71, chars 2363-2389, hits: 0)
 
-Uncovered for src/AutoRevToken.sol:
+Uncovered for src/ReflectionToken.sol:
 - Statement (location: source ID 32, line 234, chars 9474-9477, hits: 0)
 - Branch (branch: 17, path: 0) (location: source ID 32, line 261, chars 10549-10636, hits: 0)
 - Line (location: source ID 32, line 262, chars 10563-10587, hits: 0)
@@ -228,7 +228,7 @@ Anchors for Contract "safeconsole" (solc 0.8.20, source ID 23):
 
 Anchors for Contract "StdAssertions" (solc 0.8.20, source ID 2):
 
-Anchors for Contract "DeployAutoRevToken" (solc 0.8.20, source ID 30):
+Anchors for Contract "DeployReflectionToken" (solc 0.8.20, source ID 30):
 - IC 63 -> Item 272
 - Creation code
   - Refers to item: Function "run" (location: source ID 30, line 9, chars 249-700, hits: 40)
@@ -297,7 +297,7 @@ Anchors for Contract "StdCheats" (solc 0.8.20, source ID 4):
 
 Anchors for Contract "stdStorage" (solc 0.8.20, source ID 9):
 
-Anchors for Contract "AutoRevTokenTest" (solc 0.8.20, source ID 33):
+Anchors for Contract "ReflectionTokenTest" (solc 0.8.20, source ID 33):
 
 Anchors for Contract "IERC20Errors" (solc 0.8.20, source ID 25):
 
@@ -313,7 +313,7 @@ Anchors for Contract "IERC721TokenReceiver" (solc 0.8.20, source ID 19):
 
 Anchors for Contract "IERC721Errors" (solc 0.8.20, source ID 25):
 
-Anchors for Contract "AutoRevToken" (solc 0.8.20, source ID 32):
+Anchors for Contract "ReflectionToken" (solc 0.8.20, source ID 32):
 - IC 10 -> Item 0
 - Runtime code
   - Refers to item: Function "" (location: source ID 32, line 57, chars 2430-2835, hits: 40)

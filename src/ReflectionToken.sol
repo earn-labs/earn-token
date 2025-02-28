@@ -9,11 +9,11 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {IERC20Metadata} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 
 /**
- * @title AutoRevToken
+ * @title ReflectionToken
  * @author Nadina Oates
  * @notice This contract implements a token that automatically distributes rewards from fees to all holders based on their balance.
  */
-contract AutoRevToken is ERC20, Ownable {
+contract ReflectionToken is ERC20, Ownable {
     /*//////////////////////////////////////////////////////////////
                             STATE VARIABLES
     //////////////////////////////////////////////////////////////*/
@@ -45,11 +45,11 @@ contract AutoRevToken is ERC20, Ownable {
     /*//////////////////////////////////////////////////////////////
                                  ERRORS
     //////////////////////////////////////////////////////////////*/
-    error AutoRevToken__ExcludedFromRewardListTooLong();
-    error AutoRevToken__ValueAlreadySet();
-    error AutoRevToken__TokenTransferFailed();
-    error AutoRevToken__InvalidFee();
-    error AutoRevToken__TransfersDisabled();
+    error ReflectionToken__ExcludedFromRewardListTooLong();
+    error ReflectionToken__ValueAlreadySet();
+    error ReflectionToken__TokenTransferFailed();
+    error ReflectionToken__InvalidFee();
+    error ReflectionToken__TransfersDisabled();
 
     /*//////////////////////////////////////////////////////////////
                                FUNCTIONS
@@ -75,7 +75,7 @@ contract AutoRevToken is ERC20, Ownable {
     //////////////////////////////////////////////////////////////*/
     function setFee(uint256 newTxFee) external onlyOwner {
         if (newTxFee > 10000) {
-            revert AutoRevToken__InvalidFee();
+            revert ReflectionToken__InvalidFee();
         }
         s_txFee = newTxFee * 1e18;
         emit SetFee(newTxFee);
@@ -93,7 +93,7 @@ contract AutoRevToken is ERC20, Ownable {
         IERC20 tokenContract = IERC20(tokenAddress);
         uint256 amount = tokenContract.balanceOf(address(this));
         success = tokenContract.transfer(receiverAddress, amount);
-        if (!success) revert AutoRevToken__TokenTransferFailed();
+        if (!success) revert ReflectionToken__TokenTransferFailed();
     }
 
     function getFee() external view returns (uint256) {
@@ -151,7 +151,7 @@ contract AutoRevToken is ERC20, Ownable {
             } else {
                 txFee = s_txFee;
                 if (txFee == PRECISION) {
-                    revert AutoRevToken__TransfersDisabled();
+                    revert ReflectionToken__TransfersDisabled();
                 }
             }
 
@@ -222,11 +222,11 @@ contract AutoRevToken is ERC20, Ownable {
 
     function _excludeFromReward(address account, bool isExcluded) private {
         if (s_isExcludedFromReward[account] == isExcluded) {
-            revert AutoRevToken__ValueAlreadySet();
+            revert ReflectionToken__ValueAlreadySet();
         }
 
         if (s_excludedFromReward.length + 1 > 100) {
-            revert AutoRevToken__ExcludedFromRewardListTooLong();
+            revert ReflectionToken__ExcludedFromRewardListTooLong();
         }
 
         if (isExcluded) {

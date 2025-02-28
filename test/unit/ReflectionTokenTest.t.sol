@@ -4,18 +4,18 @@ pragma solidity 0.8.20;
 import {Test, console} from "forge-std/Test.sol";
 import {ERC20, IERC20, IERC20Errors} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-import {AutoRevToken, Ownable} from "src/AutoRevToken.sol";
-import {DeployAutoRevToken} from "script/DeployAutoRevToken.s.sol";
+import {ReflectionToken, Ownable} from "src/ReflectionToken.sol";
+import {DeployReflectionToken} from "script/DeployReflectionToken.s.sol";
 import {HelperConfig} from "script/HelperConfig.s.sol";
 
-contract AutoRevTokenTest is Test {
+contract ReflectionTokenTest is Test {
     // configuration
-    DeployAutoRevToken deployment;
+    DeployReflectionToken deployment;
     HelperConfig helperConfig;
     HelperConfig.NetworkConfig networkConfig;
 
     // contract
-    AutoRevToken token;
+    ReflectionToken token;
 
     // helpers
     address USER1 = makeAddr("user1");
@@ -45,7 +45,7 @@ contract AutoRevTokenTest is Test {
 
     // setup
     function setUp() external {
-        deployment = new DeployAutoRevToken();
+        deployment = new DeployReflectionToken();
         (token, helperConfig) = deployment.run();
         networkConfig = helperConfig.getActiveNetworkConfigStruct();
     }
@@ -212,7 +212,7 @@ contract AutoRevTokenTest is Test {
         vm.prank(owner);
         token.setFee(10000);
 
-        vm.expectRevert(AutoRevToken.AutoRevToken__TransfersDisabled.selector);
+        vm.expectRevert(ReflectionToken.ReflectionToken__TransfersDisabled.selector);
 
         vm.prank(USER1);
         token.transfer(USER2, amount);
@@ -413,7 +413,7 @@ contract AutoRevTokenTest is Test {
         address owner = token.owner();
         uint256 newFee = 10010;
 
-        vm.expectRevert(AutoRevToken.AutoRevToken__InvalidFee.selector);
+        vm.expectRevert(ReflectionToken.ReflectionToken__InvalidFee.selector);
 
         vm.prank(owner);
         token.setFee(newFee);
@@ -508,7 +508,7 @@ contract AutoRevTokenTest is Test {
     function test__RevertWhen__ExcludeFromRewardAlreadySet() public {
         address owner = token.owner();
 
-        vm.expectRevert(AutoRevToken.AutoRevToken__ValueAlreadySet.selector);
+        vm.expectRevert(ReflectionToken.ReflectionToken__ValueAlreadySet.selector);
 
         vm.prank(owner);
         token.excludeFromReward(USER1, false);
@@ -524,7 +524,7 @@ contract AutoRevTokenTest is Test {
 
         assertEq(token.getNumberOfAccountsExcludedFromRewards(), 100);
 
-        vm.expectRevert(AutoRevToken.AutoRevToken__ExcludedFromRewardListTooLong.selector);
+        vm.expectRevert(ReflectionToken.ReflectionToken__ExcludedFromRewardListTooLong.selector);
 
         vm.prank(owner);
         token.excludeFromReward(USER1, true);
@@ -572,7 +572,7 @@ contract AutoRevTokenTest is Test {
             address(token), abi.encodeWithSelector(token.transfer.selector, USER2, contractBalance), abi.encode(false)
         );
 
-        vm.expectRevert(AutoRevToken.AutoRevToken__TokenTransferFailed.selector);
+        vm.expectRevert(ReflectionToken.ReflectionToken__TokenTransferFailed.selector);
 
         vm.prank(owner);
         token.withdrawTokens(address(token), USER2);

@@ -8,7 +8,7 @@ import {StdCheats} from "forge-std/StdCheats.sol";
 import {StdUtils} from "forge-std/StdUtils.sol";
 
 import {AddressSet, AddressSets, STARTER_ADDRESS} from "test/invariant/AddressSets.sol";
-import {AutoRevToken} from "src/AutoRevToken.sol";
+import {ReflectionToken} from "src/ReflectionToken.sol";
 
 contract Handler is CommonBase, StdCheats, StdUtils, Test {
     using AddressSets for AddressSet;
@@ -19,7 +19,7 @@ contract Handler is CommonBase, StdCheats, StdUtils, Test {
     AddressSet _actors;
     address _currentActor;
 
-    AutoRevToken public token;
+    ReflectionToken public token;
 
     mapping(bytes32 => uint256) public calls;
 
@@ -45,7 +45,7 @@ contract Handler is CommonBase, StdCheats, StdUtils, Test {
     }
 
     // constructor
-    constructor(AutoRevToken token_) {
+    constructor(ReflectionToken token_) {
         token = token_;
 
         address owner = token.owner();

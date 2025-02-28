@@ -3,19 +3,19 @@
 pragma solidity 0.8.20;
 
 import {Test, console} from "forge-std/Test.sol";
-import {AutoRevToken, Ownable} from "src/AutoRevToken.sol";
-import {DeployAutoRevToken} from "script/DeployAutoRevToken.s.sol";
+import {ReflectionToken, Ownable} from "src/ReflectionToken.sol";
+import {DeployReflectionToken} from "script/DeployReflectionToken.s.sol";
 import {HelperConfig} from "script/HelperConfig.s.sol";
 import {Transfer, TransferFrom, Approve} from "script/Interactions.s.sol";
 
-contract AutoRevTokenIntegrationTest is Test {
+contract ReflectionTokenIntegrationTest is Test {
     // configuration
-    DeployAutoRevToken deployment;
+    DeployReflectionToken deployment;
     HelperConfig helperConfig;
     HelperConfig.NetworkConfig networkConfig;
 
     // contract
-    AutoRevToken token;
+    ReflectionToken token;
 
     // helpers
     address USER1 = makeAddr("user1");
@@ -38,7 +38,7 @@ contract AutoRevTokenIntegrationTest is Test {
 
     // setup
     function setUp() external virtual {
-        deployment = new DeployAutoRevToken();
+        deployment = new DeployReflectionToken();
         (token, helperConfig) = deployment.run();
         networkConfig = helperConfig.getActiveNetworkConfigStruct();
     }
