@@ -30,8 +30,9 @@ contract AutoRevTokenInvariantTest is StdInvariant, Test {
         excludeSender(address(token));
         excludeSender(address(handler));
 
-        bytes4[] memory selectors = new bytes4[](1);
+        bytes4[] memory selectors = new bytes4[](2);
         selectors[0] = Handler.transferTokens.selector;
+        selectors[1] = Handler.transferFromTokens.selector;
 
         targetSelector(FuzzSelector({addr: address(handler), selectors: selectors}));
 
@@ -55,11 +56,13 @@ contract AutoRevTokenInvariantTest is StdInvariant, Test {
         console.log("Contract balance: ", contractBalance);
     }
 
-    function invariant_TotalFees() public view {
+    function invariant__TotalFees() public view {
         console.log("Total Fees: ", token.getTotalFees());
         console.log("Ghost Total Fees: ", handler.ghost_totalFees());
         assertEq(handler.ghost_totalFees(), token.getTotalFees());
     }
+
+    function invariant__Reflections() public view {}
 
     function invariant__CallSummary() public view {
         handler.callSummary();

@@ -109,12 +109,36 @@ contract Handler is CommonBase, StdCheats, StdUtils, Test {
         if (!token.isExcludedFromFee(_currentActor)) {
             ghost_totalFees += fee;
         }
-        // {
-        //     console.log("Amount: ", amount);
-        //     console.log("Transfer Amount: ", amount - fee);
-        //     console.log("Fee: ", fee);
-        //     console.log("Total Fees: ", token.getTotalFees());
-        //     console.log("Ghost Total Fees: ", ghost_totalFees);
-        // }
+    }
+
+    function transferFromTokens(uint256 actorSeed, uint256 spenderSeed, uint256 receiverSeed, uint256 amount)
+        public
+        useActor(actorSeed)
+        countCall("transferTokens")
+    {
+        _actors.add(msg.sender);
+        address spender = _actors.rand(spenderSeed);
+        address receiver = _actors.rand(receiverSeed);
+
+        uint256 actorBalance = token.balanceOf(_currentActor);
+        if (actorBalance == 0) {
+            console.log("Account with zero balance: ", _currentActor);
+            uint256 fundedAmount = bound(amount, 1000, 10_000_000 ether);
+            token.transfer(_currentActor, fundedAmount);
+            assert(token.balanceOf(_currentActor) == actorBalance + fundedAmount);
+        }
+
+        amount = bound(amount, 1, token.balanceOf(_currentActor));
+
+        vm.prank(_currentActor);
+        token.approve(spender, amount);
+
+        vm.prank(spender);
+        token.transferFrom(_currentActor, receiver, amount);
+
+        uint256 fee = token.getFee() * amount / PRECISION;
+        if (!token.isExcludedFromFee(_currentActor)) {
+            ghost_totalFees += fee;
+        }
     }
 }

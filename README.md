@@ -1,9 +1,9 @@
-# FOUNDRY STARTER
+# REFLECTION TOKEN (UPDATED)
 
 ![Version](https://img.shields.io/badge/version-1.0.0-blue.svg?style=for-the-badge)
 ![Forge](https://img.shields.io/badge/forge-v0.2.0-blue.svg?style=for-the-badge)
 ![Solc](https://img.shields.io/badge/solc-v0.8.20-blue.svg?style=for-the-badge)
-[![GitHub License](https://img.shields.io/github/license/trashpirate/foundry-starter?style=for-the-badge)](https://github.com/trashpirate/foundry-starter/blob/master/LICENSE)
+[![GitHub License](https://img.shields.io/github/license/trashpirate/foundry-starter?style=for-the-badge)](https://github.com/trashpirate/reflection-token/blob/master/LICENSE)
 
 [![Website: nadinaoates.com](https://img.shields.io/badge/Portfolio-00e0a7?style=for-the-badge&logo=Website)](https://nadinaoates.com)
 [![LinkedIn: nadinaoates](https://img.shields.io/badge/LinkedIn-0a66c2?style=for-the-badge&logo=LinkedIn&logoColor=f5f5f5)](https://linkedin.com/in/nadinaoates)
@@ -11,7 +11,8 @@
 
 
 ## About
-Project Description
+This repo contains the smart contract code and a full test suite for a Reflection Token based on the ERC20 standard. The contract is designed to automatically distribute transaction fees to token holders, providing them with automatic revenue share from the transaction volume. The code is adapted from the [SAFEMOON]() contract, with modifications to remove liqudity and marketing fees and leveraging Openzepplin contracts for security and best practices. A detailed description of the reflection mechanism can be found [here](https://github.com/regohiro/reflect-contract-doc/blob/main/). The PdF version is available in the [docs](https://github.com/trashpirate/reflection-token/tree/master/docs). 
+
 
 ## Installation
 
@@ -42,6 +43,7 @@ Update chain ids in the `HelperConfig.s.sol` file for the chain you want to conf
 - Ethereum: 1 | Sepolia: 11155111 
 - Base: 8453 | Base sepolia: 84532
 - Bsc: 56 | Bsc Testnet: 97
+- Avalanche: 43114 | Fuji: 43113
 
 ### Run tests
 ```bash
