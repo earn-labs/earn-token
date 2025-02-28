@@ -14,6 +14,8 @@ contract Handler is CommonBase, StdCheats, StdUtils, Test {
     using AddressSets for AddressSet;
 
     // state variables
+    uint256 constant PRECISION = 10000 * 1e18;
+
     AddressSet _actors;
     address _currentActor;
 
@@ -52,6 +54,7 @@ contract Handler is CommonBase, StdCheats, StdUtils, Test {
         vm.startPrank(owner);
         token.setFee(200);
         token.excludeFromFee(address(this), true);
+        token.excludeFromReward(address(this), true);
         token.transfer(address(this), token.balanceOf(owner));
         vm.stopPrank();
 
@@ -89,9 +92,12 @@ contract Handler is CommonBase, StdCheats, StdUtils, Test {
         _actors.add(msg.sender);
         address receiver = _actors.rand(receiverSeed);
 
-        if (token.balanceOf(_currentActor) == 0) {
+        uint256 actorBalance = token.balanceOf(_currentActor);
+        if (actorBalance == 0) {
+            console.log("Account with zero balance: ", _currentActor);
             uint256 fundedAmount = bound(amount, 1000, 10_000_000 ether);
             token.transfer(_currentActor, fundedAmount);
+            assert(token.balanceOf(_currentActor) == actorBalance + fundedAmount);
         }
 
         amount = bound(amount, 1, token.balanceOf(_currentActor));
@@ -99,7 +105,16 @@ contract Handler is CommonBase, StdCheats, StdUtils, Test {
         vm.prank(_currentActor);
         token.transfer(receiver, amount);
 
-        uint256 fee = token.getFee() * amount / 10000;
-        ghost_totalFees += fee;
+        uint256 fee = token.getFee() * amount / PRECISION;
+        if (!token.isExcludedFromFee(_currentActor)) {
+            ghost_totalFees += fee;
+        }
+        // {
+        //     console.log("Amount: ", amount);
+        //     console.log("Transfer Amount: ", amount - fee);
+        //     console.log("Fee: ", fee);
+        //     console.log("Total Fees: ", token.getTotalFees());
+        //     console.log("Ghost Total Fees: ", ghost_totalFees);
+        // }
     }
 }

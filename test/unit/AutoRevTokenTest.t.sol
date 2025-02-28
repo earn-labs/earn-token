@@ -25,6 +25,7 @@ contract AutoRevTokenTest is Test {
 
     uint256 constant STARTING_BALANCE = 500_000_000 ether;
     uint256 constant TOKEN_AMOUNT = 10_000 ether;
+    uint256 constant PRECISION = 10000 * 1e18;
 
     // events
     event Transfer(address indexed from, address indexed to, uint256 amount);
@@ -58,7 +59,7 @@ contract AutoRevTokenTest is Test {
         view
         returns (uint256 expectedBalanceFrom, uint256 expectedBalanceTo, uint256 reflectionsFrom, uint256 reflectionsTo)
     {
-        uint256 tax = amount * token.getFee() / 10000;
+        uint256 tax = amount * token.getFee() / PRECISION;
         uint256 totalSupply = token.totalSupply();
 
         expectedBalanceFrom = token.balanceOf(from) - amount;
@@ -194,9 +195,11 @@ contract AutoRevTokenTest is Test {
 
     function test__EmitEvent__Transfer() public funded(USER1) {
         uint256 amount = 10_000 ether;
+        uint256 fee = amount * token.getFee() / PRECISION;
+        uint256 transferAmount = amount - fee;
 
         vm.expectEmit(true, true, true, true);
-        emit Transfer(USER1, USER2, amount);
+        emit Transfer(USER1, USER2, transferAmount);
 
         vm.prank(USER1);
         token.transfer(USER2, amount);
@@ -273,12 +276,14 @@ contract AutoRevTokenTest is Test {
 
     function test__EmitEvent__TransferFrom() public funded(USER1) {
         uint256 amount = 10_000 ether;
+        uint256 fee = amount * token.getFee() / PRECISION;
+        uint256 transferAmount = amount - fee;
 
         vm.prank(USER1);
         token.approve(SPENDER, amount);
 
         vm.expectEmit(true, true, true, true);
-        emit Transfer(USER1, USER2, amount);
+        emit Transfer(USER1, USER2, transferAmount);
 
         vm.prank(SPENDER);
         token.transferFrom(USER1, USER2, amount);
@@ -381,7 +386,7 @@ contract AutoRevTokenTest is Test {
         vm.prank(owner);
         token.setFee(newFee);
 
-        assertEq(token.getFee(), newFee);
+        assertEq(token.getFee(), newFee * 1e18);
     }
 
     function test__EmitEvent__SetFee() public {
@@ -578,7 +583,7 @@ contract AutoRevTokenTest is Test {
     //////////////////////////////////////////////////////////////*/
     function test__GetTotalFees(uint256 amount) public funded(USER1) {
         amount = bound(amount, 1, STARTING_BALANCE);
-        uint256 fee = token.getFee() * amount / 10000;
+        uint256 fee = token.getFee() * amount / PRECISION;
 
         vm.prank(USER1);
         token.transfer(USER2, amount);

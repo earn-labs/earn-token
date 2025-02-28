@@ -25,6 +25,7 @@ contract AutoRevTokenIntegrationTest is Test {
 
     uint256 constant STARTING_BALANCE = 500_000_000 ether;
     uint256 constant TOKEN_AMOUNT = 10_000 ether;
+    uint256 constant PRECISION = 10000 * 1e18;
 
     // modifiers
     modifier funded(address account) {
@@ -57,7 +58,7 @@ contract AutoRevTokenIntegrationTest is Test {
         view
         returns (uint256 expectedBalanceFrom, uint256 expectedBalanceTo, uint256 reflectionsFrom, uint256 reflectionsTo)
     {
-        uint256 tax = amount * token.getFee() / 10000;
+        uint256 tax = amount * token.getFee() / PRECISION;
         uint256 totalSupply = token.totalSupply();
 
         expectedBalanceFrom = token.balanceOf(from) - amount;

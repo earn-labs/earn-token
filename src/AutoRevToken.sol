@@ -17,7 +17,7 @@ contract AutoRevToken is ERC20, Ownable {
     /*//////////////////////////////////////////////////////////////
                             STATE VARIABLES
     //////////////////////////////////////////////////////////////*/
-    uint256 private constant PRECISION = 10000;
+    uint256 private constant PRECISION = 10000 * 1e18;
     uint256 private constant MAX = type(uint256).max;
 
     uint256 private immutable i_tTotalSupply;
@@ -62,7 +62,7 @@ contract AutoRevToken is ERC20, Ownable {
         address initialOwner
     ) ERC20(name_, symbol_) Ownable(msg.sender) {
         i_tTotalSupply = totalSupply_ * 10 ** decimals();
-        s_txFee = initialTxFee;
+        s_txFee = initialTxFee * 1e18;
 
         _excludeFromFee(initialOwner, true);
         _excludeFromFee(address(this), true);
@@ -74,11 +74,11 @@ contract AutoRevToken is ERC20, Ownable {
                            EXTERNAL FUNCTIONS
     //////////////////////////////////////////////////////////////*/
     function setFee(uint256 newTxFee) external onlyOwner {
-        if (newTxFee > PRECISION) {
+        if (newTxFee > 10000) {
             revert AutoRevToken__InvalidFee();
         }
-        s_txFee = newTxFee;
-        emit SetFee(s_txFee);
+        s_txFee = newTxFee * 1e18;
+        emit SetFee(newTxFee);
     }
 
     function excludeFromFee(address account, bool isExcluded) external onlyOwner {
@@ -157,7 +157,7 @@ contract AutoRevToken is ERC20, Ownable {
 
             // calc t-values
             uint256 tAmount = value;
-            uint256 tTxFee = (tAmount * txFee) / PRECISION;
+            uint256 tTxFee = tAmount * txFee / PRECISION;
             uint256 tTransferAmount = tAmount - tTxFee;
 
             // calc r-values
@@ -203,7 +203,7 @@ contract AutoRevToken is ERC20, Ownable {
                 // reflect fee
                 // can never go below zero because rTxFee percentage of
                 // current s_rTotalSupply
-                s_rTotalSupply = s_rTotalSupply - rTxFee;
+                s_rTotalSupply -= rTxFee;
                 s_totalFees += tTxFee;
 
                 emit Transfer(from, to, tTransferAmount);

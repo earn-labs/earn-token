@@ -45,7 +45,6 @@ contract AutoRevTokenInvariantTest is StdInvariant, Test {
         for (uint256 index = 0; index < numOfActors; index++) {
             sumOfBalances += token.balanceOf(handler.actorAtIndex(index));
         }
-        // uint256 ownerBalance = token.balanceOf(token.owner());
 
         uint256 contractBalance = token.balanceOf(address(handler));
         assertApproxEqAbs(token.totalSupply(), sumOfBalances + contractBalance, 1000);
@@ -54,6 +53,12 @@ contract AutoRevTokenInvariantTest is StdInvariant, Test {
         console.log("Total Balance: ", sumOfBalances + contractBalance);
         console.log("Sum of balances: ", sumOfBalances);
         console.log("Contract balance: ", contractBalance);
+    }
+
+    function invariant_TotalFees() public view {
+        console.log("Total Fees: ", token.getTotalFees());
+        console.log("Ghost Total Fees: ", handler.ghost_totalFees());
+        assertEq(handler.ghost_totalFees(), token.getTotalFees());
     }
 
     function invariant__CallSummary() public view {
