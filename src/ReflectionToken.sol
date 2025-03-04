@@ -73,6 +73,11 @@ contract ReflectionToken is ERC20, Ownable {
     /*//////////////////////////////////////////////////////////////
                            EXTERNAL FUNCTIONS
     //////////////////////////////////////////////////////////////*/
+
+    /**
+     * @notice Sets transaction fee
+     * @param newTxFee new transaction fee in basis points (1% = 100)
+     */
     function setFee(uint256 newTxFee) external onlyOwner {
         if (newTxFee > 10000) {
             revert ReflectionToken__InvalidFee();
@@ -81,14 +86,29 @@ contract ReflectionToken is ERC20, Ownable {
         emit SetFee(newTxFee);
     }
 
+    /**
+     * @notice Excludes address from transaction fee
+     * @param account address
+     * @param isExcluded whether the account is excluded or not
+     */
     function excludeFromFee(address account, bool isExcluded) external onlyOwner {
         _excludeFromFee(account, isExcluded);
     }
 
+    /**
+     * @notice Excludes address from reflection reward
+     * @param account address
+     * @param isExcluded whether the account is excluded or not
+     */
     function excludeFromReward(address account, bool isExcluded) external onlyOwner {
         _excludeFromReward(account, isExcluded);
     }
 
+    /**
+     * @notice Withdraws tokens from contract
+     * @param tokenAddress token contract address
+     * @param receiverAddress address to receive tokens
+     */
     function withdrawTokens(address tokenAddress, address receiverAddress) external onlyOwner returns (bool success) {
         IERC20 tokenContract = IERC20(tokenAddress);
         uint256 amount = tokenContract.balanceOf(address(this));
@@ -119,11 +139,17 @@ contract ReflectionToken is ERC20, Ownable {
     /*//////////////////////////////////////////////////////////////
                             PUBLIC FUNCTIONS
     //////////////////////////////////////////////////////////////*/
-
+    /**
+     * @notice Returns total supply
+     */
     function totalSupply() public view override returns (uint256) {
         return i_tTotalSupply;
     }
 
+    /**
+     * @notice Returns balance of account
+     * @param account address
+     */
     function balanceOf(address account) public view override returns (uint256) {
         if (s_isExcludedFromReward[account]) return s_tBalances[account];
         uint256 rate = _getRate();
@@ -133,6 +159,12 @@ contract ReflectionToken is ERC20, Ownable {
     /*//////////////////////////////////////////////////////////////
                            INTERNAL FUNCTIONS
     //////////////////////////////////////////////////////////////*/
+    /**
+     * @notice Overrides the transfer logic as recommended by Openzeppelin handling all the fee and reflection logic.
+     * @param from address
+     * @param to address
+     * @param value transfer amount
+     */
     function _update(address from, address to, uint256 value) internal override {
         // minting
         if (from == address(0)) {
@@ -215,11 +247,21 @@ contract ReflectionToken is ERC20, Ownable {
                            PRIVATE FUNCTIONS
     //////////////////////////////////////////////////////////////*/
 
+    /**
+     * @notice Excludes address from transaction fee
+     * @param account address
+     * @param isExcluded whether the account is excluded or not
+     */
     function _excludeFromFee(address account, bool isExcluded) private {
         s_isExcludedFromFee[account] = isExcluded;
         emit ExcludedFromFee(account, isExcluded);
     }
 
+    /**
+     * @notice Excludes address from reflection reward
+     * @param account address
+     * @param isExcluded whether the account is excluded or not
+     */
     function _excludeFromReward(address account, bool isExcluded) private {
         if (s_isExcludedFromReward[account] == isExcluded) {
             revert ReflectionToken__ValueAlreadySet();
@@ -251,6 +293,9 @@ contract ReflectionToken is ERC20, Ownable {
         emit ExcludedFromReward(account, isExcluded);
     }
 
+    /**
+     * @notice Returns the conversion rate between R (reflection) space and T (true) space. See docs for details.
+     */
     function _getRate() private view returns (uint256) {
         uint256 rSupply = s_rTotalSupply;
         uint256 tSupply = i_tTotalSupply;
