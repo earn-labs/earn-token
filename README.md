@@ -11,6 +11,9 @@
 
 
 ## About
+
+_**DISCLAIMER: This code is provided as-is and has not been audited for security or functionality. Use at your own risk.**_
+
 This repo contains the smart contract code and a full test suite for a Reflection Token based on the ERC20 standard. The contract is designed to automatically distribute transaction fees to token holders, providing them with automatic revenue share from the transaction volume. The code is adapted from the [SAFEMOON]() contract, with modifications to remove liqudity and marketing fees and leveraging Openzepplin contracts and a newer Solidity version for security and best practices. A detailed description of the reflection mechanism can be found [here](https://github.com/regohiro/reflect-contract-doc/blob/main/). The PdF version is available in the [docs](https://github.com/trashpirate/reflection-token/tree/master/docs). 
 
 
