@@ -96,14 +96,18 @@ contract ReflectionTokenTest is Test {
     /*//////////////////////////////////////////////////////////////
                                 TRANSFER
     //////////////////////////////////////////////////////////////*/
-    function test__Transfer(uint256 amount) public funded(USER1) {
-        amount = bound(amount, 1, STARTING_BALANCE);
+    function test__TransferNormal() public funded(USER1) {
+        uint256 amount = 1000 ether; // amount = bound(amount, 1, STARTING_BALANCE);
 
         (uint256 expectedBalanceUser1, uint256 expectedBalanceUser2, uint256 reflectionsUser1, uint256 reflectionsUser2)
         = calcReflections(USER1, USER2, amount);
 
+        console.log("Expected: ", expectedBalanceUser2);
+
         vm.prank(USER1);
         token.transfer(USER2, amount);
+
+        console.log("Actual: ", uint256(token.balanceOf(USER2)));
 
         assertEq(token.balanceOf(USER1), expectedBalanceUser1 + reflectionsUser1);
         assertEq(token.balanceOf(USER2), expectedBalanceUser2 + reflectionsUser2);

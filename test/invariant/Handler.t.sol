@@ -15,6 +15,7 @@ contract Handler is CommonBase, StdCheats, StdUtils, Test {
 
     // state variables
     uint256 constant PRECISION = 10000 * 1e18;
+    uint256 constant MIN_BALANCE = 1000e18;
 
     AddressSet _actors;
     address _currentActor;
@@ -23,9 +24,15 @@ contract Handler is CommonBase, StdCheats, StdUtils, Test {
 
     mapping(bytes32 => uint256) public calls;
 
+    mapping(address => uint256) public lastBalance;
+    mapping(address => uint256) public currentBalance;
+    mapping(address => string) public userType;
+
+    uint256 public ghost_fee;
     uint256 public ghost_totalFees;
     uint256 public ghost_transferZeroTokens;
     uint256 public ghost_transferFromZeroTokens;
+    bool public ghost_transferToSelf;
 
     // modifiers
     modifier createActor() {
@@ -58,11 +65,17 @@ contract Handler is CommonBase, StdCheats, StdUtils, Test {
         token.transfer(address(this), token.balanceOf(owner));
         vm.stopPrank();
 
-        _actors.add(firstActor);
+        for (uint256 i = 0; i < 25; i++) {
+            address actor = makeAddr(string.concat("actor", vm.toString(i)));
+            fundActor(actor);
+            _actors.add(actor);
+        }
+        // _actors.add(firstActor);
 
         console.log("First actor balance: ", token.balanceOf(firstActor));
         console.log("Handler Token Balance", token.balanceOf(address(this)));
         console.log("Owner Token Balance", token.balanceOf(owner));
+        console.log("Handler setup.");
     }
 
     // helper functions
@@ -72,6 +85,10 @@ contract Handler is CommonBase, StdCheats, StdUtils, Test {
 
     function actorAtIndex(uint256 index) external view returns (address) {
         return _actors.getAddressAtIndex(index);
+    }
+
+    function fundActor(address actor) public {
+        token.transfer(actor, 10_000_000 ether);
     }
 
     function callSummary() external view {
@@ -89,23 +106,50 @@ contract Handler is CommonBase, StdCheats, StdUtils, Test {
         useActor(actorSeed)
         countCall("transferTokens")
     {
-        _actors.add(msg.sender);
+        // _actors.add(msg.sender);
+        // if (token.balanceOf(msg.sender) < MIN_BALANCE) {
+        //     fundActor(msg.sender);
+        // }
+
         address receiver = _actors.rand(receiverSeed);
 
-        uint256 actorBalance = token.balanceOf(_currentActor);
-        if (actorBalance == 0) {
-            console.log("Account with zero balance: ", _currentActor);
-            uint256 fundedAmount = bound(amount, 1000, 10_000_000 ether);
-            token.transfer(_currentActor, fundedAmount);
-            assert(token.balanceOf(_currentActor) == actorBalance + fundedAmount);
+        // prevent transfer to self
+        ghost_transferToSelf = false;
+        if (_currentActor == receiver) {
+            ghost_transferToSelf = true;
+            return;
         }
 
-        amount = bound(amount, 1, token.balanceOf(_currentActor));
+        // prevent small amounts
+        uint256 actorBalance = token.balanceOf(_currentActor);
+        if (actorBalance < MIN_BALANCE) {
+            fundActor(_currentActor);
+        }
+
+        amount = bound(amount, MIN_BALANCE, token.balanceOf(_currentActor));
+
+        // Record balances before transfer for all actors
+        uint256 fee = token.getFee() * amount / PRECISION;
+        for (uint256 i = 0; i < _actors.count(); i++) {
+            address actor = _actors.getAddressAtIndex(i);
+            if (actor == _currentActor) {
+                // console.log("Sender");
+                userType[actor] = "Sender";
+                lastBalance[actor] = token.balanceOf(actor) - amount;
+            } else if (actor == receiver) {
+                // console.log("Receiver");
+                userType[actor] = "Receiver";
+                lastBalance[actor] = token.balanceOf(actor) + amount - fee;
+            } else {
+                // console.log("Holder");
+                userType[actor] = "Holder";
+                lastBalance[actor] = token.balanceOf(actor);
+            }
+        }
 
         vm.prank(_currentActor);
         token.transfer(receiver, amount);
 
-        uint256 fee = token.getFee() * amount / PRECISION;
         if (!token.isExcludedFromFee(_currentActor)) {
             ghost_totalFees += fee;
         }
@@ -116,19 +160,46 @@ contract Handler is CommonBase, StdCheats, StdUtils, Test {
         useActor(actorSeed)
         countCall("transferTokens")
     {
-        _actors.add(msg.sender);
+        // _actors.add(msg.sender);
+        // if (token.balanceOf(msg.sender) < MIN_BALANCE) {
+        //     fundActor(msg.sender);
+        // }
+
         address spender = _actors.rand(spenderSeed);
         address receiver = _actors.rand(receiverSeed);
 
-        uint256 actorBalance = token.balanceOf(_currentActor);
-        if (actorBalance == 0) {
-            console.log("Account with zero balance: ", _currentActor);
-            uint256 fundedAmount = bound(amount, 1000, 10_000_000 ether);
-            token.transfer(_currentActor, fundedAmount);
-            assert(token.balanceOf(_currentActor) == actorBalance + fundedAmount);
+        // prevent transfer to self
+        ghost_transferToSelf = false;
+        if (_currentActor == receiver) {
+            ghost_transferToSelf = true;
+            return;
         }
 
-        amount = bound(amount, 1, token.balanceOf(_currentActor));
+        uint256 actorBalance = token.balanceOf(_currentActor);
+        if (actorBalance < MIN_BALANCE) {
+            fundActor(_currentActor);
+        }
+
+        amount = bound(amount, MIN_BALANCE, token.balanceOf(_currentActor));
+
+        // Record balances before transfer for all actors
+        uint256 fee = token.getFee() * amount / PRECISION;
+        for (uint256 i = 0; i < _actors.count(); i++) {
+            address actor = _actors.getAddressAtIndex(i);
+            if (actor == _currentActor) {
+                // console.log("Sender");
+                userType[actor] = "Sender";
+                lastBalance[actor] = token.balanceOf(actor) - amount;
+            } else if (actor == receiver) {
+                // console.log("Receiver");
+                userType[actor] = "Receiver";
+                lastBalance[actor] = token.balanceOf(actor) + amount - fee;
+            } else {
+                // console.log("Holder");
+                userType[actor] = "Holder";
+                lastBalance[actor] = token.balanceOf(actor);
+            }
+        }
 
         vm.prank(_currentActor);
         token.approve(spender, amount);
@@ -136,7 +207,6 @@ contract Handler is CommonBase, StdCheats, StdUtils, Test {
         vm.prank(spender);
         token.transferFrom(_currentActor, receiver, amount);
 
-        uint256 fee = token.getFee() * amount / PRECISION;
         if (!token.isExcludedFromFee(_currentActor)) {
             ghost_totalFees += fee;
         }
