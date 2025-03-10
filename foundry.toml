@@ -9,9 +9,9 @@ fs_permissions = [{ access = "read", path = "./broadcast" }]
 
 
 [fuzz]
-runs = 10000
+runs = 100000
 
 [invariant]
-runs = 64
-depth = 128
+runs = 10
+depth = 64
 fail_on_revert = true

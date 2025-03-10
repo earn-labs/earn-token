@@ -7,14 +7,14 @@
 
 [![Website: trashpirate.io](https://img.shields.io/badge/Portfolio-00e0a7?style=for-the-badge&logo=Website)](https://trashpirate.io)
 [![LinkedIn: nadinaoates](https://img.shields.io/badge/LinkedIn-0a66c2?style=for-the-badge&logo=LinkedIn&logoColor=f5f5f5)](https://linkedin.com/in/nadinaoates)
-[![Twitter: N0_crypto](https://img.shields.io/badge/@0xTrashPirate-black?style=for-the-badge&logo=X)](https://twitter.com/0xTrashPirate)
+[![Twitter: 0xTrashPirate](https://img.shields.io/badge/@0xTrashPirate-black?style=for-the-badge&logo=X)](https://twitter.com/0xTrashPirate)
 
 
 ## About
 
 _**DISCLAIMER: This code is provided as-is and has not been audited for security or functionality. Use at your own risk.**_
 
-This repo contains the smart contract code and a full test suite for a Reflection Token based on the ERC20 standard. The contract is designed to automatically distribute transaction fees to token holders, providing them with automatic revenue share from the transaction volume. The code is adapted from the [SAFEMOON]() contract, with modifications to remove liqudity and marketing fees and leveraging Openzepplin contracts and a newer Solidity version for security and best practices. A detailed description of the reflection mechanism can be found [here](https://github.com/regohiro/reflect-contract-doc/blob/main/). The PdF version is available in the [docs](https://github.com/trashpirate/reflection-token/tree/master/docs). 
+This repo contains the smart contract code and a full test suite for a Reflection Token based on the ERC20 standard. The contract is designed to automatically distribute transaction fees to token holders, providing them with automatic revenue share from the transaction volume. The code is adapted from the [RFI](https://etherscan.io/address/0xa1afffe3f4d611d252010e3eaf6f4d77088b0cd7#code) smart contract, with modifications to remove liqudity and marketing fees and leveraging Openzepplin contracts and a newer Solidity version for security and best practices. A detailed description of the reflection mechanism can be found [here](https://github.com/regohiro/reflect-contract-doc/blob/main/). The PdF version is available in the [docs](https://github.com/trashpirate/reflection-token/tree/master/docs). 
 
 
 ## Installation

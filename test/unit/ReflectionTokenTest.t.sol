@@ -94,10 +94,23 @@ contract ReflectionTokenTest is Test {
     }
 
     /*//////////////////////////////////////////////////////////////
+                                BALANCEOF
+    //////////////////////////////////////////////////////////////*/
+    function test__BalanceOf(uint256 amount) public {
+        amount = bound(amount, 1, token.balanceOf(token.owner()));
+
+        vm.startPrank(token.owner());
+        token.transfer(USER1, amount);
+        vm.stopPrank();
+
+        assertEq(token.balanceOf(USER1), amount);
+    }
+
+    /*//////////////////////////////////////////////////////////////
                                 TRANSFER
     //////////////////////////////////////////////////////////////*/
-    function test__TransferNormal() public funded(USER1) {
-        uint256 amount = 1000 ether; // amount = bound(amount, 1, STARTING_BALANCE);
+    function test__TransferNormal(uint256 amount) public funded(USER1) {
+        amount = bound(amount, 1, STARTING_BALANCE);
 
         (uint256 expectedBalanceUser1, uint256 expectedBalanceUser2, uint256 reflectionsUser1, uint256 reflectionsUser2)
         = calcReflections(USER1, USER2, amount);

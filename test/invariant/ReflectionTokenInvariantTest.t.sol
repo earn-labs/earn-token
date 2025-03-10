@@ -51,12 +51,15 @@ contract ReflectionTokenInvariantTest is StdInvariant, Test {
         }
 
         uint256 contractBalance = token.balanceOf(address(handler));
+        uint256 roundingError = token.totalSupply() - sumOfBalances - contractBalance;
         assertApproxEqAbs(token.totalSupply(), sumOfBalances + contractBalance, 1000);
 
         console.log("Total supply: ", token.totalSupply());
         console.log("Total Balance: ", sumOfBalances + contractBalance);
         console.log("Sum of balances: ", sumOfBalances);
         console.log("Contract balance: ", contractBalance);
+        console.log("Transaction Amount: ", handler.ghost_totalTransactionAmount());
+        console.log("Rounding error: ", roundingError);
     }
 
     function invariant__TotalFees() public view {
@@ -91,7 +94,7 @@ contract ReflectionTokenInvariantTest is StdInvariant, Test {
         }
     }
 
-    function invariant__CallSummary() public view {
+    function invariant__CallSummary() public {
         handler.callSummary();
     }
 }

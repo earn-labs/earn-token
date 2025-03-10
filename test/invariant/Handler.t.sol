@@ -30,8 +30,8 @@ contract Handler is CommonBase, StdCheats, StdUtils, Test {
 
     uint256 public ghost_fee;
     uint256 public ghost_totalFees;
-    uint256 public ghost_transferZeroTokens;
-    uint256 public ghost_transferFromZeroTokens;
+    uint256 public ghost_totalTransactionAmount;
+    uint256 public ghost_sumOfBalances;
     bool public ghost_transferToSelf;
 
     // modifiers
@@ -65,7 +65,7 @@ contract Handler is CommonBase, StdCheats, StdUtils, Test {
         token.transfer(address(this), token.balanceOf(owner));
         vm.stopPrank();
 
-        for (uint256 i = 0; i < 25; i++) {
+        for (uint256 i = 0; i < 200; i++) {
             address actor = makeAddr(string.concat("actor", vm.toString(i)));
             fundActor(actor);
             _actors.add(actor);
@@ -88,16 +88,25 @@ contract Handler is CommonBase, StdCheats, StdUtils, Test {
     }
 
     function fundActor(address actor) public {
-        token.transfer(actor, 10_000_000 ether);
+        token.transfer(actor, 100_000 ether);
     }
 
-    function callSummary() external view {
+    function callSummary() public {
         console.log("\nCall summary:");
         console.log("-------------------");
-        console.log("transferTokens", calls["transferTokens"]);
+        console.log("transferTokens: ", calls["transferTokens"]);
+        console.log("transferFromTokens: ", calls["transferFromTokens"]);
 
+        for (uint256 index = 0; index < _actors.count(); index++) {
+            ghost_sumOfBalances += token.balanceOf(_actors.getAddressAtIndex(index));
+        }
+        ghost_sumOfBalances += token.balanceOf(address(this));
+
+        console.log("\nError Analysis:");
         console.log("-------------------");
-        console.log("transferToken with zero tokens: ", ghost_transferZeroTokens);
+        console.log("Total Transaction Amount: ", ghost_totalTransactionAmount);
+        console.log("Rounding Error: ", token.totalSupply() - ghost_sumOfBalances);
+        console.log("Total Fees: ", token.getTotalFees());
     }
 
     // test functions
@@ -153,12 +162,14 @@ contract Handler is CommonBase, StdCheats, StdUtils, Test {
         if (!token.isExcludedFromFee(_currentActor)) {
             ghost_totalFees += fee;
         }
+
+        ghost_totalTransactionAmount += amount;
     }
 
     function transferFromTokens(uint256 actorSeed, uint256 spenderSeed, uint256 receiverSeed, uint256 amount)
         public
         useActor(actorSeed)
-        countCall("transferTokens")
+        countCall("transferFromTokens")
     {
         // _actors.add(msg.sender);
         // if (token.balanceOf(msg.sender) < MIN_BALANCE) {
@@ -210,5 +221,7 @@ contract Handler is CommonBase, StdCheats, StdUtils, Test {
         if (!token.isExcludedFromFee(_currentActor)) {
             ghost_totalFees += fee;
         }
+
+        ghost_totalTransactionAmount += amount;
     }
 }
