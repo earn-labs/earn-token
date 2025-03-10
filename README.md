@@ -1,7 +1,7 @@
 # REFLECTION TOKEN (UPDATED!)
 
 ![Version](https://img.shields.io/badge/version-1.0.0-blue.svg?style=for-the-badge)
-![Forge](https://img.shields.io/badge/forge-v0.2.0-blue.svg?style=for-the-badge)
+![Forge](https://img.shields.io/badge/forge-v1.0.0-blue.svg?style=for-the-badge)
 ![Solc](https://img.shields.io/badge/solc-v0.8.20-blue.svg?style=for-the-badge)
 [![GitHub License](https://img.shields.io/github/license/trashpirate/foundry-starter?style=for-the-badge)](https://github.com/trashpirate/reflection-token/blob/master/LICENSE)
 
@@ -16,6 +16,7 @@ _**DISCLAIMER: This code is provided as-is and has not been audited for security
 
 This repo contains the smart contract code and a full test suite for a Reflection Token based on the ERC20 standard. The contract is designed to automatically distribute transaction fees to token holders, providing them with automatic revenue share from the transaction volume. The code is adapted from the [RFI](https://etherscan.io/address/0xa1afffe3f4d611d252010e3eaf6f4d77088b0cd7#code) smart contract, with modifications to remove liqudity and marketing fees and leveraging Openzepplin contracts and a newer Solidity version for security and best practices. A detailed description of the reflection mechanism can be found [here](https://github.com/regohiro/reflect-contract-doc/blob/main/). The PdF version is available in the [docs](https://github.com/trashpirate/reflection-token/tree/master/docs). 
 
+The repo also includes a short error analysis as a discrepancy between total supply and the total sum of balances was discovered during testing (see `test/invariant/ReflectionTokenInvariantTest::invariant__TokenSupply`). The issue likely arises from rounding errors during oprations that convert from R to T space and vice versa. It was found that the rounding error increases with the number of accounts receiving reflections but decreases with the number of transactions. While the data for this analysis is insufficient to draw any definite conclusions, it looks like that the error is subject to increased volatilty and randomness the higher the number of transfers. Based on the available data, the rounding error seems to remain in the lower digits and is unlikely to have a significant impact on the overall functionality of the contract.
 
 ## Installation
 
@@ -94,5 +95,5 @@ Don't forget to give the project a star! Thanks again!
 
 ## 📝 License
 
-Copyright © 2024 [Nadina Oates](https://github.com/trashpirate).
+Copyright © 2025 [Nadina Oates](https://github.com/trashpirate).
 
