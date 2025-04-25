@@ -1,3 +1,4 @@
 {
-    "solidity.compileUsingLocalVersion": "/home/oates/projects/tokens/autorev-token/soljson-v0.8.20+commit.a1b79de6.js"
+    "solidity.compileUsingLocalVersion": "/home/oates/projects/tokens/autorev-token/soljson-v0.8.20+commit.a1b79de6.js",
+    "solidity.compileUsingRemoteVersion": "v0.8.20+commit.a1b79de6"
 }

@@ -6,14 +6,15 @@ pragma solidity 0.8.20;
 //////////////////////////////////////////////////////////////*/
 import {ERC20, IERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {IERC20Metadata} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
+
+import {IReflectionToken} from "src/IReflectionToken.sol";
 
 /**
  * @title ReflectionToken
  * @author Nadina Oates
  * @notice This contract implements a token that automatically distributes rewards from fees to all holders based on their balance.
  */
-contract ReflectionToken is ERC20, Ownable {
+contract ReflectionToken is ERC20, IReflectionToken, Ownable {
     /*//////////////////////////////////////////////////////////////
                             STATE VARIABLES
     //////////////////////////////////////////////////////////////*/
@@ -34,13 +35,6 @@ contract ReflectionToken is ERC20, Ownable {
 
     mapping(address => bool) private s_isExcludedFromFee;
     mapping(address => bool) private s_isExcludedFromReward;
-
-    /*//////////////////////////////////////////////////////////////
-                                 EVENTS
-    //////////////////////////////////////////////////////////////*/
-    event SetFee(uint256 indexed fee);
-    event ExcludedFromReward(address indexed account, bool indexed isExcluded);
-    event ExcludedFromFee(address indexed account, bool indexed isExcluded);
 
     /*//////////////////////////////////////////////////////////////
                                  ERRORS
