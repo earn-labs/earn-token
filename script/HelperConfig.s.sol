@@ -18,8 +18,8 @@ contract HelperConfig is Script {
                                 HELPERS
     //////////////////////////////////////////////////////////////*/
 
-    string constant NAME = "Test 2";
-    string constant SYMBOL = "TEST2";
+    string constant NAME = "Reflection Token";
+    string constant SYMBOL = "RFT";
     uint256 constant TOTAL_SUPPLY = 1_000_000_000;
 
     constructor() {
@@ -46,7 +46,7 @@ contract HelperConfig is Script {
             name: NAME,
             symbol: SYMBOL,
             totalSupply: TOTAL_SUPPLY,
-            initialFee: 10000,
+            initialFee: 200,
             initialOwner: 0x40A040781E7C28Fc7AEa8E00040e4a0242551A52
         });
     }
@@ -56,7 +56,7 @@ contract HelperConfig is Script {
             name: NAME,
             symbol: SYMBOL,
             totalSupply: TOTAL_SUPPLY,
-            initialFee: 10000,
+            initialFee: 200,
             initialOwner: 0xEcA5652Ebc9A3b7E9E14294197A86b02cD8C3A67 // development wallet (trashpirate.base.eth)
         });
     }
