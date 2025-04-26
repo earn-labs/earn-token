@@ -71,8 +71,8 @@ https://sepolia.etherscan.io/address/0xc8bdd7805fad8dc59b753fecccdf17b98c17465b
 
 ### Mainnet
 Deployment of similar version on 10/08/2023:   
-Contract: https://etherscan.io/token/0x0b61c4f33bcdef83359ab97673cb5961c6435f4e
-Chart: https://www.dextools.io/app/en/ether/pair-explorer/0x32558f1214bd874c6cbc1ab545b28a18990ff7ee
+Contract: https://etherscan.io/token/0x0b61c4f33bcdef83359ab97673cb5961c6435f4e  
+Chart: https://www.dextools.io/app/en/ether/pair-explorer/0x32558f1214bd874c6cbc1ab545b28a18990ff7ee  
 
 
 ## Contributing
